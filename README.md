@@ -25,7 +25,8 @@ L'endpoint verso cui effettuare la richiesta GET è https://api.github.com/repos
 Non so ancora come usare le informazioni ottenute da code scanning perché non ho avuto modo di capire quali sono, per via dell'errore 403. Per ora ho solo stampato il contenuto della risposta per capire quali informazioni sono disponibili. In ogni caso, dal sito di GitHub ho trovato che: "Code scanning is a feature that you use to analyze the code in a GitHub repository to find security vulnerabilities and coding errors. Any problems identified by the analysis are shown in GitHub. [...] If code scanning finds a potential vulnerability or error in your code, GitHub displays an alert in the repository. After you fix the code that triggered the alert, GitHub closes the alert."
 
 
-# Errore che ottengo quando provo ad usare code scanning:
+Errore che ottengo quando provo ad usare code scanning:
+
 Errore: 403 - {"message":"Advanced Security must be enabled for this repository to use code scanning.", 
 "documentation_url":"https://docs.github.com/rest/code-scanning/code-scanning#list-code-scanning-alerts-for-a-repository"}
 

@@ -1,13 +1,15 @@
 from time import sleep
-import requests, pymongo
-import controlli
-import code_scanning
+import requests, pymongo, json, random
+import controlli, clone
+
 
 def getInfoAssignments(collection, headers):
     '''Funzione che ottiene le informazioni di tutte le assegnazioni accettate in una classroom specifica'''
+
+    classroom_id = 193019  # ID della classroom
     
     # URL dell'API di GitHub Classroom per ottenere le assegnazioni accettate in una classroom specifica
-    url = 'https://api.github.com/classrooms/193019/assignments'
+    url = f'https://api.github.com/classrooms/{classroom_id}/assignments'
 
     # Richiesta GET all'endpoint per ottenere le assegnazioni accettate
     response = requests.get(url, headers=headers)
@@ -302,6 +304,7 @@ def punteggio(headers, collection4, commits):
                     if "output" in check_run and "Autograding" in check_run['name'] and check_run['pull_requests'] != []:
 
                         output = check_run["output"]    # Punteggio del commit
+                        punteggio = output["text"].split(" ")[1]
 
                         #author_info = check_run['pull_requests'][0]["head"]["repo"]["name"]    #DEBUG
                         #print(author_info)  #DEBUG
@@ -309,7 +312,7 @@ def punteggio(headers, collection4, commits):
                         
                         # Aggiorna il documento nel DB, aggiungendo il punteggio del commit, in base allo sha del commit utilizzato come filtro
                         filtro = {"sha" : commit_sha}
-                        collection4.update_one(filtro, {"$set": {"points": output["text"]}})
+                        collection4.update_one(filtro, {"$set": {"points": punteggio}})
 
                     else:
                         print("Campo 'output' non trovato per questa check run")
@@ -456,6 +459,115 @@ def getCommits(collection4):
 
 
 
+def getCompletedCommits(collection4):
+    ''' Funzione che restituisce una lista di stringhe contenenti il titolo, lo sha e il repository di ogni commit (per studenti che hanno completato l'esercizio) '''
+
+    repos = []
+
+    ris = collection4.find({"$or": [
+        {"points": "Points 5/5"},
+        {"points": "Points 4/4"},
+        {"points": "Points 3/3"}
+    ]})
+
+    for r in ris:
+        repos.append(r.get("repo")) # LUNGHEZZA TOTALE DI REPOS 186
+
+    repos.sort()
+
+
+    # Recupera tutti i commit degli autori trovati in un'unica query
+    all_commits = collection4.find({"repo": {"$in": repos}})
+
+    # Lista per memorizzare i dettagli dei commit
+    commits_details = []
+
+    for commit in all_commits:
+        title = commit.get("title")
+        sha = commit.get("sha")
+        author = commit.get("author")
+        repo = commit.get("repo")
+        points = commit.get("points")
+        date = commit.get("date")
+        date_initial_commit = commit.get("date_initial_commit")
+
+        # Creazione di un dizionario per il commit corrente
+        commit_details = {
+            "title": title,
+            "sha": sha,
+            "author": author,
+            "repo": repo,
+            "points": points,
+            "date": date,
+            "date_initial_commit": date_initial_commit
+        }
+
+        # Aggiungi il dizionario alla lista dei commit
+        commits_details.append(commit_details)
+
+    '''# Scrivi la lista di commit in un file JSON
+    with open("commits.json", "w") as json_file:
+        json.dump(commits_details, json_file, indent=4)'''
+
+    #collection6.insert_many(commits_details)
+    
+    # LUNGHEZZA TOTALE DI COMMITS 1360
+
+
+def countCompletedCommits(collection6):
+    ''' Funzione che restituisce il numero di commit completati '''
+
+    pipeline = [
+    {"$group": {"_id": {"repo": "$repo"}, "count": {"$sum": 1}}},
+    {"$sort": {"_id.repo": 1}}  # Ordina per il campo "repo" nel documento "_id"
+    ]
+
+    results = collection6.aggregate(pipeline)
+
+    pochiCommits = []
+    appesa = False
+    with open("output.txt", "w") as file:
+        for result in results:
+            if result.get("count") < 10:
+                #file.write(str(result) + "\n")
+                pochiCommits.append(result)
+            elif result.get("count") == 10 and "esercitazione-4" in result.get("_id").get("repo") and not appesa:
+                pochiCommits.append(result)
+
+    semafori = [] 
+    monitor = [] 
+    threads = [] 
+    messaggi = [] 
+    server = []
+
+    for pc in pochiCommits:
+        if "esercitazione-1" in pc.get("_id").get("repo"):
+            semafori.append(pc.get("_id").get("repo"))
+        elif "esercitazione-2" in pc.get("_id").get("repo"):
+            monitor.append(pc.get("_id").get("repo"))
+        elif "esercitazione-3" in pc.get("_id").get("repo"):
+            threads.append(pc.get("_id").get("repo"))
+        elif "esercitazione-4" in pc.get("_id").get("repo"):
+            messaggi.append(pc.get("_id").get("repo"))
+        elif "esercitazione-5" in pc.get("_id").get("repo"):
+            server.append(pc.get("_id").get("repo"))
+
+
+    repos = []
+
+    random.seed(15)
+
+    repos.extend(random.sample(semafori, 10))
+    repos.extend(random.sample(monitor, 10))
+    repos.extend(random.sample(threads, 10))
+    repos.extend(random.sample(messaggi, 10))
+    repos.extend(random.sample(server, 10))
+
+    return repos
+
+
+
+
 if __name__ == "__main__":
     
     # region Inizializzo DB
@@ -463,16 +575,18 @@ if __name__ == "__main__":
     client = pymongo.MongoClient("mongodb://localhost:27017/")
 
     # Accesso al database (creato se non esiste)
-    db = client["tesi"]
+    #db = client["tesi"]
+    db = client["tesi2"]
 
     # Accesso a una collezione (creata se non esiste)
     collection = db["assignments"]
     collection2 = db["repos"]
     collection4 = db["commits"]
+    collection6 = db["commitsCompletati"]
     # endregion
         
     # region token e headers http request 
-    token = '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'  # Token di accesso all'API di GitHub (con tutti i permessi possibili)
+    token = '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'  # Token di accesso all'API di GitHub (con tutti i permessi possibili)
 
     headers = {
         'Authorization': f'token {token}',
@@ -480,14 +594,15 @@ if __name__ == "__main__":
     }
     #endregion
 
-    getInfoAssignments(collection, headers) 
+    #getInfoAssignments(collection, headers) 
     assignments = assignmentID(collection) 
 
-    getRepos(collection2, assignments, headers)
+    #getRepos(collection2, assignments, headers)
     repository = repos(collection2)
 
     #numCommit(headers, collection4, repository) 
-    #commits = getCommits(collection4)
+    commits = getCommits(collection4)
+    #print(commits) #DEBUG
     
     #lineePerCommit(headers, collection4, commits)
     
@@ -499,6 +614,32 @@ if __name__ == "__main__":
 
     #esercizi(headers, collection, repository, assignments)
 
+    #region Non è necessario eseguire questo blocco se si decide di clonare tutti i commit
+    
+    #getCompletedCommits(collection4)
+    #completeRepos = countCompletedCommits(collection6)
 
-    code_scanning.codeScanningInfo(token, repository)
+    #clone.clone_repositories(completeRepos, collection6, "so-unina-sangiovanni")
+    #subprocess.run(["./script.sh"])
 
+    #endregion
+
+    # Se si decide di clonare tutti i commit, eseguire questo blocco
+    #clone.clone_all_repositories(commits, "so-unina-sangiovanni")
+    #subprocess.run(["./script.sh"])
+
+    '''# Percorso del file JSON
+    percorso_file_json = "commitsCompletati.json"
+
+    # Leggi i documenti dal file JSON
+    with open(percorso_file_json, "r") as file:
+        documenti_json = json.load(file)
+
+    # Rimuovi il campo "_id" da ogni documento
+    for documento in documenti_json:
+        documento.pop("_id", None)
+
+    # Inserimento dei documenti nella collezione
+    collection6.insert_many(documenti_json)
+
+    print("Documenti inseriti con successo.")'''

@@ -20,5 +20,3 @@ def write_to_sheet(sheet, testo1, param1, testo2, param2, testo3, param3, testo4
         sheet[f"B{current_row}"] = param4
 
     return current_row+1
-
-

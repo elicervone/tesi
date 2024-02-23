@@ -11,6 +11,7 @@ def controlloAssignment(id, accepted, submissions, passing, collection):
         return True
     else:
         return False
+    
 
 def controlloRepo(repo, collection):
     ''' Funzione che controlla se una repository è già presente nel DB '''
@@ -23,6 +24,7 @@ def controlloRepo(repo, collection):
     else:
         return False
     
+    
 def controlloCommit(sha, collection):
     ''' Funzione che controlla se un commit è già presente nel DB '''
 
@@ -34,5 +36,3 @@ def controlloCommit(sha, collection):
         return True
     else:
         return False
-    
-

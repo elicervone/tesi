@@ -1,9 +1,5 @@
-from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Border, Side
 
-import openpyxl
-from matplotlib import pyplot as plt
-from io import BytesIO
 
 def style_sheet(sheet, num):
     ''' Funzione che crea lo stile del foglio Excel '''
@@ -31,30 +27,3 @@ def style_sheet(sheet, num):
                                                     top=Side(border_style="thick", color="000000"),
                                                     bottom=Side(border_style="thick", color="000000"))
         current_row += 7
-
-
-
-
-def grafico(title, authors, sheet):
-    ''' Funzione che crea un grafico a barre con i dati passati come argomento '''
-
-    # Creazione del grafico utilizzando matplotlib
-    plt.subplots(figsize=(15, 4))  # Imposta le dimensioni della figura (larghezza, altezza)
-    plt.subplots_adjust(bottom=0.55, left=0.1)  # Regola lo spazio inferiore per le etichette sull'asse x
-
-    plt.bar(range(len(authors)), list(authors.values()), align='center')
-    plt.xticks(range(len(authors)), list(authors.keys()), rotation='vertical')
-    plt.xlabel('Studenti')
-    plt.ylabel('Numero di commit')
-    plt.title(f'Numero di commit per studente - {title}')
-
-    # Salva il grafico in un buffer
-    buffer = BytesIO()
-    plt.savefig(buffer, format='png')
-    buffer.seek(0)
-
-    # Inserimento del grafico nel file Excel
-    img = openpyxl.drawing.image.Image(buffer)
-    sheet.add_image(img, 'D2')  # Inserisci l'immagine nella cella D2 (puoi scegliere la posizione desiderata)
-
-

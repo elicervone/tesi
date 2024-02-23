@@ -16,6 +16,8 @@ Per eseguire il file *mainDB* bisogna specificare l'esercitazione per la quale s
     - messaggi -> esercitazione 4
     - server -> esercitazione 5
 
+Quindi ad esempio: python mainDB.py semafori
+
 Quando si esegue il file *mainDB*, non viene stampato nulla a video, ma viene creato direttamente il file excel con le informazioni utili. Il file viene salvato nella cartella del progetto. Il nome del file è "esercitazione.xlsx" dove "esercitazione" è il nome dell'esercitazione specificato come argomento quando si esegue il file *mainDB*.
 
 Per quanto riguarda i check statici e code scanning:
@@ -29,4 +31,3 @@ Errore che ottengo quando provo ad usare code scanning:
 
 Errore: 403 - {"message":"Advanced Security must be enabled for this repository to use code scanning.", 
 "documentation_url":"https://docs.github.com/rest/code-scanning/code-scanning#list-code-scanning-alerts-for-a-repository"}
-

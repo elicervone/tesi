@@ -1,0 +1,83 @@
+[{
+  "_id": {
+    "$oid": "6595378180f1c20c4890072f"
+  },
+  "id": 509702,
+  "title": "Esercitazione 1 (Semafori)",
+  "slug": "esercitazione-1-semafori",
+  "accepted": 131,
+  "submissions": 124,
+  "passing": 62,
+  "files": [
+    "calcolo_parallelo_su_un_vettore_condiviso",
+    "coppia_di_buffer",
+    "lettori-scrittori_con_semafori_su_una_coppia_di_valori_condivisa",
+    "simulazione_di_un_disco_con_un_vettore_circolare"
+  ]
+},
+{
+  "_id": {
+    "$oid": "6595378180f1c20c48900730"
+  },
+  "id": 513528,
+  "title": "Esercitazione 2 (Monitor)",
+  "slug": "esercitazione-2-monitor",
+  "accepted": 127,
+  "submissions": 116,
+  "passing": 87,
+  "files": [
+    "lettori-scrittori_con_monitor_e_processi",
+    "prelievi_multipli",
+    "produttore-consumatore_con_priorita",
+    "simulazione_di_un_disco_con_un_vettore_circolare"
+  ]
+},
+{
+  "_id": {
+    "$oid": "6595378180f1c20c48900731"
+  },
+  "id": 523801,
+  "title": "Esercitazione 3 (Threads)",
+  "slug": "esercitazione-3-threads",
+  "accepted": 123,
+  "submissions": 119,
+  "passing": 75,
+  "files": [
+    "lettori-scrittori_su_piu_oggetti_monitor",
+    "produttore-consumatore_con_priorita",
+    "una_struttura_dati_stack_thread-safe"
+  ]
+},
+{
+  "_id": {
+    "$oid": "6595378180f1c20c48900732"
+  },
+  "id": 526524,
+  "title": "Esercitazione 4 (Messaggi)",
+  "slug": "esercitazione-4-messaggi",
+  "accepted": 116,
+  "submissions": 112,
+  "passing": 55,
+  "files": [
+    "grafo_delle_dipendenze",
+    "load_balancing",
+    "registro_distribuito",
+    "server_sincroni_multipli"
+  ]
+},
+{
+  "_id": {
+    "$oid": "6595378180f1c20c48900733"
+  },
+  "id": 529468,
+  "title": "Esercitazione 5 (Server Multithread)",
+  "slug": "esercitazione-5-server-multithread",
+  "accepted": 105,
+  "submissions": 103,
+  "passing": 44,
+  "files": [
+    "remote_procedure_call",
+    "server_aggregatore_thread",
+    "un_primo_esempio_di_server_multithread"
+  ]
+}]
